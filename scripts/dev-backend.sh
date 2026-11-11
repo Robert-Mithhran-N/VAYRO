@@ -11,3 +11,4 @@ fi
 
 echo "Starting NestJS in development mode..."
 npm run start:dev
+

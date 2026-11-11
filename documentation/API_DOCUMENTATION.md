@@ -124,3 +124,4 @@ All API responses follow a uniform JSON envelope:
    ```
 2. **Token Renewal**: Mobile and Admin clients will support silent token refresh via HTTP-only secure cookie or refresh token rotation.
 3. **Role Enforcement**: User authorization will be checked at controller boundary using `@Roles(...)` decorators and NestJS guards.
+

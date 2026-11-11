@@ -60,3 +60,4 @@ describe('HealthController Tests', () => {
     expect(mockHealthService.runSmokeTest).toHaveBeenCalledWith({ client: 'jest-test' });
   });
 });
+

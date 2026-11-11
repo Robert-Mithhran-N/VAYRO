@@ -20,3 +20,4 @@ export class SmokeTestQueryDto {
   @MaxLength(128)
   note?: string;
 }
+

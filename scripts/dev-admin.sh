@@ -11,3 +11,4 @@ fi
 
 echo "Starting Vite development server..."
 npm run dev
+

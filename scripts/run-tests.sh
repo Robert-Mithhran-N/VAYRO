@@ -36,3 +36,4 @@ else
 fi
 
 echo -e "\nAll tests completed."
+

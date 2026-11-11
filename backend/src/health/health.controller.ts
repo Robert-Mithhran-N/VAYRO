@@ -39,3 +39,4 @@ export class HealthController {
     return this.healthService.runSmokeTest(query);
   }
 }
+

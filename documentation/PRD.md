@@ -60,3 +60,4 @@ The following capability matrix is designated for incremental delivery across th
 - [ ] Product Owner review and PRD approval.
 - [ ] Finalization of user stories and acceptance criteria.
 - [ ] Consent and privacy compliance review for location sharing.
+

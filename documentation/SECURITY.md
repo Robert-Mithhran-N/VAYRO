@@ -50,3 +50,4 @@ Because location data is uniquely sensitive, VAYRO enforces strict privacy safeg
 3. **CORS Control**: Cross-Origin Resource Sharing is restricted via `CORS_ORIGINS` environment variables.
 4. **Error Sanitization**: `AllExceptionsFilter` catches unhandled exceptions and prevents internal error traces, database connection strings, or system paths from leaking to HTTP clients.
 5. **Rate Limiting**: Throttling guards will protect authentication and high-frequency endpoints from abuse.
+

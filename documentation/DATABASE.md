@@ -109,3 +109,4 @@ To support seamless travel across remote regions with intermittent or absent cel
 - **Location**: Sandboxed application document directory on Android/iOS
 - **Schema**: Versioned with automated migration hooks in `mobile/lib/core/storage/local_database.dart`
 - **Initial Verification Table**: `dev_health_records`
+

@@ -37,3 +37,4 @@ export async function runSmokeTest(): Promise<HealthResponse> {
   }
   return response.json();
 }
+

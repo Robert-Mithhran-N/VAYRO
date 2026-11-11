@@ -79,3 +79,4 @@ describe('HealthService Tests', () => {
     expect(mockPrisma.devHealthRecord.create).toHaveBeenCalled();
   });
 });
+

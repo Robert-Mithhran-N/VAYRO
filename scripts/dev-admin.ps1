@@ -1,4 +1,4 @@
-﻿# VAYRO — Start Admin Dashboard in Development Mode
+# VAYRO — Start Admin Dashboard in Development Mode
 Push-Location "$PSScriptRoot\..\admin"
 try {
   if (-not (Test-Path "node_modules")) {
@@ -10,3 +10,4 @@ try {
 } finally {
   Pop-Location
 }
+

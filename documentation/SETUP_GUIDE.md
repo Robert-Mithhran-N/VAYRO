@@ -170,3 +170,4 @@ flutter test
 
 ### "Docker is not recognized on Windows"
 - Install Docker Desktop with the WSL2 backend enabled from [docker.com](https://www.docker.com/).
+

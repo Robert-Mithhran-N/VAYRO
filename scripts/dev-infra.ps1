@@ -1,4 +1,4 @@
-﻿# VAYRO — Development Infrastructure Helper (PowerShell)
+# VAYRO — Development Infrastructure Helper (PowerShell)
 param(
   [Parameter(Position=0)]
   [ValidateSet("start", "stop", "restart", "status", "clean")]
@@ -31,3 +31,4 @@ switch ($Action) {
     }
   }
 }
+

@@ -1,4 +1,4 @@
-﻿# VAYRO — Run All Monorepo Test Suites
+# VAYRO — Run All Monorepo Test Suites
 Write-Host "=============================================" -ForegroundColor Cyan
 Write-Host "       Running VAYRO Monorepo Tests          " -ForegroundColor Cyan
 Write-Host "=============================================" -ForegroundColor Cyan
@@ -43,3 +43,4 @@ try {
 }
 
 Write-Host "`nTest execution pass complete." -ForegroundColor Green
+

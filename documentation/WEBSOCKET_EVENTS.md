@@ -96,3 +96,4 @@ Broadcast to every member of the trip and server regardless of muted status.
   "message": "Engine overheated on Highway 101 shoulder."
 }
 ```
+

@@ -1,4 +1,4 @@
-﻿# VAYRO — Start Backend API in Development Mode
+# VAYRO — Start Backend API in Development Mode
 Push-Location "$PSScriptRoot\..\backend"
 try {
   if (-not (Test-Path "node_modules")) {
@@ -10,3 +10,4 @@ try {
 } finally {
   Pop-Location
 }
+
