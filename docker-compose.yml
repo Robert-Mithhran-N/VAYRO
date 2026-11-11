@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vayro-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-vayro_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vayro_secret_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-vayro_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - vayro_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-vayro_user} -d ${POSTGRES_DB:-vayro_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - vayro-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: vayro-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-vayro_redis_dev_secret}"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - vayro_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-vayro_redis_dev_secret}", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - vayro-network
+
+volumes:
+  vayro_postgres_data:
+    name: vayro_postgres_data
+  vayro_redis_data:
+    name: vayro_redis_data
+
+networks:
+  vayro-network:
+    name: vayro-network
+    driver: bridge
+

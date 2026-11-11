@@ -1,0 +1,27 @@
+// ==============================================================================
+// VAYRO — Prisma Database Schema
+// Foundation Phase: Intentionally minimal development verification schema
+// ==============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Development health verification record.
+/// Used for verifying end-to-end connectivity between NestJS and PostgreSQL.
+model DevHealthRecord {
+  id        Int      @id @default(autoincrement())
+  service   String   @default("vayro-backend")
+  checkType String   @map("check_type")
+  status    String
+  details   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("dev_health_records")
+}
+
