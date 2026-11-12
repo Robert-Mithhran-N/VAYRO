@@ -1,75 +1,62 @@
 # VAYRO — Database Architecture & Persistence Guide
 
 **Primary Database Engine:** PostgreSQL 16 Alpine  
-**ORM / Data Layer:** Prisma ORM 5.14+  
+**ORM / Data Layer:** Prisma ORM 5.22+  
 **Local Client Persistence:** SQLite via Drift 2.18+  
 **In-Memory Store:** Redis 7 Alpine  
-**Status:** Approved Foundation  
+**Status:** Phase 2 (Authentication & Identity) Active  
 
 ---
 
 ## 1. Relational Database (PostgreSQL via Docker)
 
-PostgreSQL serves as the system of record for all durable entities:
-- Accounts, credentials, user profiles
-- Servers (Communities), members, invitations, RBAC roles
-- Trips, legs, waypoints, itineraries, and expenses
-- Audit logs, permissions, emergency event records
+PostgreSQL serves as the primary system of record for all persistent platform models.
 
 ### Connection Configuration
-The backend connects via standard PostgreSQL URI injected from the environment:
+The backend connects via standard PostgreSQL URI:
 ```env
-DATABASE_URL=postgresql://<POSTGRES_USER>:<POSTGRES_PASSWORD>@<HOST>:<PORT>/<POSTGRES_DB>
+DATABASE_URL=postgresql://vayro_user:vayro_secret_dev_password@localhost:5432/vayro_db
 ```
 
-Default development parameters (defined in `.env.example` and `docker-compose.yml`):
-- **User:** `vayro_user`
-- **Password:** `vayro_secret_dev_password`
-- **Host:** `localhost`
-- **Port:** `5432`
-- **Database:** `vayro_db`
-
 ---
 
-## 2. Prisma ORM Workflow
-
-Prisma provides type-safe query generation, automated schema migrations, and declarative relation management.
-
-### Schema Location
-The source schema is located at:
-`backend/prisma/schema.prisma`
-
-### Standard Commands
-Execute these commands from inside `backend/`:
-
-1. **Generate Prisma Client Types**:
-   ```bash
-   npm run prisma:generate
-   ```
-2. **Create and Apply Migration in Development**:
-   ```bash
-   npm run prisma:migrate
-   ```
-3. **Push Schema Directly Without Creating Migration Files** (Prototyping):
-   ```bash
-   npm run prisma:push
-   ```
-4. **Seed Database with Reproducible Development Records**:
-   ```bash
-   npm run prisma:seed
-   ```
-5. **Open Prisma Studio Interactive UI**:
-   ```bash
-   npx prisma studio
-   ```
-
----
-
-## 3. Initial Development Schema
-
-To keep the foundation clean and prevent premature schema churn before design reviews, the initial schema contains only the `DevHealthRecord` verification model:
+## 2. Active Prisma Schema (Phase 2)
 
 ```prisma
+/// Core User entity representing authenticated travelers and platform admins.
+model User {
+  id           String         @id @default(uuid())
+  email        String         @unique
+  passwordHash String         @map("password_hash")
+  displayName  String         @map("display_name")
+  phoneNumber  String?        @map("phone_number")
+  avatarUrl    String?        @map("avatar_url")
+  role         String         @default("USER")
+  isActive     Boolean        @default(true) @map("is_active")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+/// Cryptographically hashed refresh token storage for single-use rotation.
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  tokenHash String   @map("token_hash")
+  isRevoked Boolean  @default(false) @map("is_revoked")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+/// Development health verification record.
 model DevHealthRecord {
   id        Int      @id @default(autoincrement())
   service   String   @default("vayro-backend")
@@ -84,29 +71,17 @@ model DevHealthRecord {
 
 ---
 
-## 4. Development Data Management & Volume Lifecycle
+## 3. Database Migration Workflow
 
-### Persistent Development Volumes
-Docker Compose manages data persistence using a named Docker volume (`vayro_postgres_data`). Data persists across container restarts:
 ```bash
-# Graceful stop — keeps database tables and records intact
-docker compose down
+cd backend
+
+# Generate Prisma Client after schema changes
+npm run prisma:generate
+
+# Apply migrations in local development
+npm run prisma:migrate
+
+# Seed development database
+npm run prisma:seed
 ```
-
-### Destructive Teardown (Hard Reset)
-When starting fresh or after major breaking schema migrations:
-```bash
-# WARNING: Deletes persistent development database data permanently
-docker compose down -v
-```
-
----
-
-## 5. Mobile Local Database (Drift + SQLite)
-
-To support seamless travel across remote regions with intermittent or absent cellular connectivity, the mobile client implements an offline-first storage engine:
-- **Engine**: SQLite 3 via `drift`
-- **Location**: Sandboxed application document directory on Android/iOS
-- **Schema**: Versioned with automated migration hooks in `mobile/lib/core/storage/local_database.dart`
-- **Initial Verification Table**: `dev_health_records`
-

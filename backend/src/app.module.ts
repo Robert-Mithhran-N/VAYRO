@@ -4,6 +4,8 @@ import configuration from './config/configuration';
 import { validate } from './config/env.validation';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 import { RedisModule } from './redis/redis.module';
 
 @Module({
@@ -16,7 +18,8 @@ import { RedisModule } from './redis/redis.module';
     DatabaseModule,
     RedisModule,
     HealthModule,
+    UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
-

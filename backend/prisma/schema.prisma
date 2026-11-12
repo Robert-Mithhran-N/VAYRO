@@ -1,6 +1,6 @@
 // ==============================================================================
 // VAYRO — Prisma Database Schema
-// Foundation Phase: Intentionally minimal development verification schema
+// Phase 2: Authentication & Identity Management
 // ==============================================================================
 
 generator client {
@@ -25,3 +25,35 @@ model DevHealthRecord {
   @@map("dev_health_records")
 }
 
+/// Core User entity representing authenticated travelers and platform admins.
+model User {
+  id           String         @id @default(uuid())
+  email        String         @unique
+  passwordHash String         @map("password_hash")
+  displayName  String         @map("display_name")
+  phoneNumber  String?        @map("phone_number")
+  avatarUrl    String?        @map("avatar_url")
+  role         String         @default("USER") // USER, ADMIN, NAVIGATOR
+  isActive     Boolean        @default(true) @map("is_active")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+/// Refresh tokens with cryptographically hashed storage for token rotation.
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  tokenHash String   @map("token_hash")
+  isRevoked Boolean  @default(false) @map("is_revoked")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}

@@ -9,6 +9,7 @@ import '../../../../shared/widgets/vayro_button.dart';
 import '../../../../shared/widgets/vayro_card.dart';
 import '../../../../shared/widgets/vayro_loading_indicator.dart';
 import '../../../../shared/widgets/vayro_status_badge.dart';
+import '../../auth/presentation/providers/auth_provider.dart';
 import '../providers/health_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -18,6 +19,7 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final healthAsync = ref.watch(backendHealthProvider);
     final envConfig = ref.watch(envConfigProvider);
+    final authState = ref.watch(authStateProvider);
 
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,
@@ -54,6 +56,17 @@ class HomeScreen extends ConsumerWidget {
             tooltip: 'Settings',
             onPressed: () => context.push(AppConstants.routeSettings),
           ),
+          if (authState is Authenticated)
+            IconButton(
+              icon: const Icon(Icons.logout_rounded),
+              tooltip: 'Sign Out',
+              onPressed: () => ref.read(authStateProvider.notifier).logout(),
+            )
+          else
+            TextButton(
+              onPressed: () => context.push('/sign-in'),
+              child: const Text('Sign In', style: TextStyle(color: AppColors.primaryAccent)),
+            ),
         ],
       ),
       body: RefreshIndicator(
@@ -66,16 +79,50 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Welcome Header
-              const Text(
-                'Welcome, Traveler',
-                style: AppTypography.displayMedium,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              const Text(
-                'Move as One. Connect with your group, share your journey, and navigate together.',
-                style: AppTypography.bodyMedium,
-              ),
+              // User Greeting Banner
+              if (authState is Authenticated) ...[
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 20.0,
+                      backgroundColor: AppColors.primaryAccent.withValues(alpha: 0.2),
+                      child: Text(
+                        authState.user.displayName.isNotEmpty
+                            ? authState.user.displayName[0].toUpperCase()
+                            : 'U',
+                        style: const TextStyle(
+                          color: AppColors.primaryAccent,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome, ${authState.user.displayName}',
+                          style: AppTypography.displayMedium,
+                        ),
+                        Text(
+                          authState.user.email,
+                          style: AppTypography.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ] else ...[
+                const Text(
+                  'Welcome, Traveler',
+                  style: AppTypography.displayMedium,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                const Text(
+                  'Move as One. Connect with your group, share your journey, and navigate together.',
+                  style: AppTypography.bodyMedium,
+                ),
+              ],
               const SizedBox(height: AppSpacing.lg),
 
               // End-to-End Smoke Test & System Health Card
@@ -85,28 +132,28 @@ class HomeScreen extends ConsumerWidget {
               // Servers Section
               _buildSectionHeader(
                 title: 'Travel Communities (Servers)',
-                badgeText: 'Phase 2',
+                badgeText: 'Phase 3',
               ),
               const SizedBox(height: AppSpacing.sm),
               _buildEmptyStateCard(
                 icon: Icons.hub_outlined,
                 title: 'No Servers Joined',
                 subtitle:
-                    'Private travel servers and role management will be activated in Phase 2.',
+                    'Private travel servers and role management will be activated in Phase 3.',
               ),
               const SizedBox(height: AppSpacing.xl),
 
               // Trips Section
               _buildSectionHeader(
                 title: 'Active Trips',
-                badgeText: 'Phase 3',
+                badgeText: 'Phase 5',
               ),
               const SizedBox(height: AppSpacing.sm),
               _buildEmptyStateCard(
                 icon: Icons.navigation_outlined,
                 title: 'No Active Journey',
                 subtitle:
-                    'Trip creation, independent routes, and shared destinations will be unlocked in Phase 3.',
+                    'Trip creation, independent routes, and shared destinations will be unlocked in Phase 5.',
               ),
               const SizedBox(height: AppSpacing.xl),
             ],
@@ -287,4 +334,3 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
-

@@ -36,6 +36,22 @@ export class EnvironmentVariables {
   @IsString()
   @IsOptional()
   REDIS_PASSWORD?: string;
+
+  @IsString()
+  @IsOptional()
+  JWT_ACCESS_SECRET?: string;
+
+  @IsString()
+  @IsOptional()
+  JWT_ACCESS_EXPIRATION?: string;
+
+  @IsString()
+  @IsOptional()
+  JWT_REFRESH_SECRET?: string;
+
+  @IsString()
+  @IsOptional()
+  JWT_REFRESH_EXPIRATION?: string;
 }
 
 export function validate(config: Record<string, unknown>) {
@@ -53,4 +69,3 @@ export function validate(config: Record<string, unknown>) {
 
   return validatedConfig;
 }
-

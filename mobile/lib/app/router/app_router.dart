@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_constants.dart';
+import '../../features/auth/presentation/screens/sign_in_screen.dart';
+import '../../features/auth/presentation/screens/sign_up_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/home/presentation/screens/splash_screen.dart';
 import '../../features/home/presentation/screens/welcome_screen.dart';
@@ -19,6 +21,14 @@ abstract final class AppRouter {
         builder: (context, state) => const WelcomeScreen(),
       ),
       GoRoute(
+        path: '/sign-in',
+        builder: (context, state) => const SignInScreen(),
+      ),
+      GoRoute(
+        path: '/sign-up',
+        builder: (context, state) => const SignUpScreen(),
+      ),
+      GoRoute(
         path: AppConstants.routeHome,
         builder: (context, state) => const HomeScreen(),
       ),
@@ -29,4 +39,3 @@ abstract final class AppRouter {
     ],
   );
 }
-
